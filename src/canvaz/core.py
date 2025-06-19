@@ -2,7 +2,7 @@ from box import Box
 import json
 from enum import Enum
 import re
-
+from uuid import uuid4
 
 class Color(Enum):
     gray = "0"
@@ -36,9 +36,18 @@ class Canvas():
         self.edges = bdict.edges
         self.nodes = bdict.nodes
     
-    def add(self):
-        pass
+    def add_node(self,text,color:str = "0"):
+        self.nodes.append(
+            {'id': str(uuid4())[:16], 
+             'type': 'text', 
+             'text': text, 
+             'x': 0, 'y': 0, 
+             'width': 250, 'height': 60, 
+             'color': color})
     
+    def add_edge(self):
+        pass
+
     def delete(self):
         pass
 
