@@ -3,6 +3,9 @@ import json
 from enum import Enum
 import re
 from uuid import uuid4
+from .log import Log
+logger = Log.logger
+
 
 class Color(Enum):
     gray = "0"
@@ -37,6 +40,7 @@ class Canvas():
         self.nodes = bdict.nodes
     
     def add_node(self,text,color:str = "0"):
+        logger.info('add_node')
         self.nodes.append(
             {'id': str(uuid4())[:16], 
              'type': 'text', 
@@ -58,6 +62,7 @@ class Canvas():
         type: str edge, node
         key: str id 
         """
+        logger.info('select_by_id')
         def check_id(obj,id=''):
             if obj.id == id:
                 return obj
@@ -85,6 +90,7 @@ class Canvas():
             If 'all', filter from both nodes and edges.
             Defaults to 'edge'.
         """
+        logger.info('select_by_color')
         def check_key(obj, key=''):
             # Check if the object's color matches the key color
             if obj.color == key.value:
@@ -115,6 +121,7 @@ class Canvas():
         
         Returns a list of nodes with matching type.
         """
+        logger.info('select_nodes_by_type')
         def check_key(obj,key='text'):
             if obj.type == key:
                 return obj
@@ -130,6 +137,7 @@ class Canvas():
         
         Returns a list of nodes whose text contains the specified key.
         """
+        logger.info('select_nodes_by_text')
         def check_key(obj,key:str=''):
             obj_text = obj.get('text') or ''
             if key in obj_text:
@@ -145,6 +153,7 @@ class Canvas():
 
         Returns a list of edges whose labels contain the specified key.
         """
+        logger.info('select_edges_by_text')
         def check_key(obj,key:str=''):
             obj_text = obj.get('label') or ''
             if key in obj_text:
