@@ -1,0 +1,6 @@
+2025-06-26 10:38:58,333 - DEBUG - parso.python.diff - diff:282 - diff parser start
+2025-06-26 10:38:58,335 - DEBUG - parso.python.diff - diff:293 - line_lengths old: 1; new: 1
+2025-06-26 10:38:58,335 - DEBUG - parso.python.diff - diff:296 - -> code[replace] old[1:1] new[1:1]
+2025-06-26 10:38:58,336 - DEBUG - parso.python.diff - diff:421 - parse_part from 1 to 1 (to 0 in part parser)
+2025-06-26 10:38:58,336 - DEBUG - parso.python.diff - diff:339 - diff parser end
+2025-06-26 10:39:06,034 - INFO - root - core:249 - async work infor

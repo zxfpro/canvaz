@@ -244,3 +244,6 @@ class Canvas():
         mermaid_graph += "\n   ".join(edge_lines)
 
         return mermaid_graph
+    
+    async def work(self):
+        logger.info('async work infor')

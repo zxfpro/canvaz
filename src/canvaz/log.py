@@ -52,8 +52,9 @@ class Logger:
             os.makedirs(self.LOG_DIR, exist_ok=True)
             self.logger = None
             self.setup_logging()
+            self.env = 'dev'
 
-    def reset_level(self,level = 'debug'):
+    def reset_level(self,level = 'debug',env = 'dev'):
         if level == 'debug':
             self.LOG_LEVEL = logging.DEBUG  # 开发阶段
         elif level == 'info':
@@ -68,6 +69,7 @@ class Logger:
             self.LOG_LEVEL = logging.INFO  # 默认级别
 
         self.setup_logging()
+        self.env = env
 
     def setup_logging(self):
         """# --- 3. 配置 Logger ---
@@ -92,6 +94,11 @@ class Logger:
             console_handler.setFormatter(formatter)
             logger.addHandler(console_handler)
 
+            # 5.2 文件处理器 (RotatingFileHandler 或 TimedRotatingFileHandler)
+
+            # RotatingFileHandler: 按文件大小轮转
+            # maxBytes: 单个日志文件的最大字节数 (例如 10MB)
+            # backupCount: 保留的旧日志文件数量
             file_handler = RotatingFileHandler(
                 self.LOG_FILE_PATH,
                 maxBytes=10 * 1024 * 1024, # 10 MB
@@ -102,8 +109,23 @@ class Logger:
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
 
+            # TimedRotatingFileHandler: 按时间轮转 (例如每天轮转)
+            # when='midnight': 每天午夜轮转
+            # interval=1: 每隔1个单位轮转
+            # backupCount: 保留的旧日志文件数量 (例如保留最近7天的日志)
+            # file_handler = TimedRotatingFileHandler(
+            #     LOG_FILE_PATH,
+            #     when='midnight',
+            #     interval=1,
+            #     backupCount=7,
+            #     encoding='utf-8'
+            # )
+            # file_handler.setLevel(LOG_LEVEL)
+            # file_handler.setFormatter(formatter)
+            # logger.addHandler(file_handler)
         self.logger = logger
 
 
-Log = Logger(log_file_name = "app.log")
+
+Log = Logger(log_file_name = "canvas.log")
 del Logger
