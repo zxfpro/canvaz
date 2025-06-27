@@ -1,8 +1,9 @@
-from box import Box
+"""core """
 import json
 from enum import Enum
 import re
 from uuid import uuid4
+from box import Box
 from .log import Log
 logger = Log.logger
 
