@@ -127,5 +127,5 @@ class Logger:
 
 
 
-Log = Logger(log_file_name = "canvas.log")
+Log = Logger(log_file_name = "app.log")
 del Logger
