@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": "1",
+      "text": "Start",
+      "x": 100,
+      "y": 100,
+      "width": 100,
+      "height": 50,
+      "color": "gray"
+    },
+    {
+      "id": "2",
+      "text": "Process Data",
+      "x": 300,
+      "y": 100,
+      "width": 150,
+      "height": 60,
+      "color": "green"
+    },
+    {
+      "id": "3",
+      "text": "End",
+      "x": 500,
+      "y": 100,
+      "width": 100,
+      "height": 50,
+      "color": "red"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "1",
+      "to": "2",
+      "text": "connects",
+      "color": "gray"
+    },
+    {
+      "id": "e2",
+      "from": "2",
+      "to": "3",
+      "text": "processes",
+      "color": "gray"
+    }
+  ]
+}

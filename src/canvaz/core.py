@@ -1,7 +1,12 @@
-"""core """
+""" 这是一个包，用于处理canvas的文件，并提供一些方法来操作canvas 
+    本包的核心思路在于获取canvas 中的Node和Edge 结点, 这些结点都是Box格式 
+    通过直接修改Box的属性值来修改Node和Edge
+    常见的属性值为 id, text, x, y, width, height, color
+"""
 import json
 from enum import Enum
 import re
+import os
 from uuid import uuid4
 from box import Box
 from .log import Log
@@ -9,6 +14,20 @@ logger = Log.logger
 
 
 class Color(Enum):
+    """ 颜色枚举
+
+    Args:
+        Enum (_type_): 颜色枚举
+    
+    Attributes:
+        gray: 灰色
+        red: 红色
+        origne: 橙色
+        yellow: 黄色
+        green: 绿色
+        blue: 蓝色
+        purpol: 紫色
+    """
     gray = "0"
     red = "1"
     origne = "2"
@@ -18,18 +37,22 @@ class Color(Enum):
     purpol = "6"
 
 class Canvas():
-    def __init__(self,file_path:str=None):
-        """
-        初始化
+    def __init__(self,file_path:str):
+        """ 初始化
 
-        file_path : str 传入格式为canvas的文件路径
+        Args:
+            file_path (str, optional): 传入格式为canvas的文件路径. Defaults to None.
         """
+        assert file_path is not None, 'file_path is not None'
+        assert os.path.exists(file_path), 'file_path is not exists'
+        assert file_path.endswith('.canvas'), 'file_path is not a canvas file'
+
         self.file_path = file_path
         with open(file_path,'r') as f:
             text = f.read()
-        bdict = Box(json.loads(text))
+            bdict = Box(json.loads(text))
         self.bdict = bdict
-        
+        # 设置默认颜色
         for edge in bdict.edges:
             if not edge.get('color'):
                 edge.setdefault('color','0')
@@ -40,30 +63,53 @@ class Canvas():
         self.edges = bdict.edges
         self.nodes = bdict.nodes
     
-    def add_node(self,text,color:str = "0"):
+    def add_node(self,text:str,color:Color | str =Color.gray):
+        """ 添加节点
+
+        Args:
+            text (str): 节点文本
+            color (Color | str, optional): 节点颜色. Defaults to Color.gray.
+        """
         logger.info('add_node')
+        if isinstance(color,Color):
+            color = color.value
+        else:
+            color = color
         self.nodes.append(
             {'id': str(uuid4())[:16], 
              'type': 'text', 
              'text': text, 
              'x': 0, 'y': 0, 
              'width': 250, 'height': 60, 
-             'color': color})
+             'color': color.value})
     
-    def add_edge(self):
+    def add_edge(self,from_node:str,to_node:str,color:Color | str =Color.gray):
+        """ TODO 等待实现
+        """
         pass
 
     def delete(self):
+        """ TODO 等待实现
+        """
         pass
 
     
-    def select_by_id(self,type:str ='edge',key:str='')->Box:
-        """
-        通过id 来选择 Box
-        type: str edge, node
-        key: str id 
+    def select_by_id(self,key:str='',type:str ='edge',)->Box:
+        """ 通过id 来选择 Box
+        可以通过在key中传入id 获得不同type的
+        Args:
+            type (str, optional): 类型. Defaults to 'edge'.
+            key (str, optional): id. Defaults to ''.
+        
+        For example:
+            select_by_id(type='edge',key='123')
+            select_by_id(type='node',key='123')
+            
+        Returns:
+            Box: 返回的Box
         """
         logger.info('select_by_id')
+
         def check_id(obj,id=''):
             if obj.id == id:
                 return obj
@@ -77,23 +123,24 @@ class Canvas():
                 if check_id(node,id=id):
                     return node
                 
-    def select_by_color(self, key: Color = '', type='edge'):
-        """
-        Select objects based on color.
-
-        key: Color
-            The color to filter the objects by.
+    def select_by_color(self, key: Color | str =Color.gray, type='edge')->list[Box]:
+        """ 通过颜色来选择 Box
+        可以通过在key中传入颜色 获得不同type的 Box
         
-        type: str
-            The type of objects to filter ('edge', 'node', 'all').
-            If 'edge', filter from edges.
-            If 'node', filter from nodes.
-            If 'all', filter from both nodes and edges.
-            Defaults to 'edge'.
+        For example:
+            select_by_color(key='0',type='edge')
+            select_by_color(key='0',type='node')
+            select_by_color(key='0',type='all')
+            
+        Args:
+            key (Color, optional): 颜色. Defaults to ''.
+            type (str, optional): 类型. Defaults to 'edge'.
+
+        Returns:
+            Box: 返回的Box
         """
         logger.info('select_by_color')
         def check_key(obj, key=''):
-            # Check if the object's color matches the key color
             if obj.color == key.value:
                 return obj
             
@@ -113,20 +160,27 @@ class Canvas():
             
         # Return a list of objects whose color matches the key
         return [i for i in objs if check_key(i, key=color)]
-    def select_nodes_by_type(self,key:str='')->list:
-        """
-        Select nodes based on their type.
-
-        key: str
-            The type of nodes to select. Defaults to 'text'.
+    
+    def select_nodes_by_type(self,key:str='')->list[Box]:
+        """ 通过类型来选择 Box
+        可以通过在key中传入类型 获得不同type的 Box(edge 只有text类型,所以没有设置type参数)
         
-        Returns a list of nodes with matching type.
+        For example:
+            select_nodes_by_type(key='text')
+            select_nodes_by_type(key='file')
+            
+        Args:
+            key (str, optional): 类型. Defaults to ''.
+
+        Returns:
+            list: 返回的Box
         """
         logger.info('select_nodes_by_type')
         def check_key(obj,key='text'):
             if obj.type == key:
                 return obj
         objs = self.nodes
+
         return [i for i in objs if check_key(i,key=key)]
 
     def select_nodes_by_text(self,key:str='')->list:
@@ -145,14 +199,20 @@ class Canvas():
                 return obj
         objs = self.nodes
         return [i for i in objs if check_key(i,key=key)]
-    def select_edges_by_text(self,key:str='')->list:
-        """
-        Select edges containing specific text.
+    def select_edges_by_text(self,key:str='')->list[Box]:
+        """ 通过文本来选择 Box
+        可以通过在key中传入文本 获得不同type的 Box(edge 只有label类型,所以没有设置type参数)
+        
+        For example:
+            select_edges_by_text(key='text')
+            select_edges_by_text(key='file')
+            
 
-        key: str
-            The text to search for in edges.
+        Args:
+            key (str, optional): 文本. Defaults to ''.
 
-        Returns a list of edges whose labels contain the specified key.
+        Returns:
+            list: 返回的Box
         """
         logger.info('select_edges_by_text')
         def check_key(obj,key:str=''):
@@ -163,34 +223,24 @@ class Canvas():
         return [i for i in objs if check_key(i,key=key)]
         
     def select_by_styleAttributes(self,type = 'file',key:Color=''):
-        """
-        Placeholder for selecting objects by style attributes.
-
-        type: str
-            The object type to select ('file', etc.).
-        
-        key: Color
-            The color key for selection.
-            
-        This method is currently not implemented.
+        """ TODO 等待实现
         """
         pass
     
-    def to_file(self,file_path):
-        """
-        Write the canvas data to a specified file path in JSON format.
+    def to_file(self,file_path:str)->None:
+        """保存到文件夹
 
-        file_path: str
-            The path to the file where data will be written.
+        Args:
+            file_path (_type_): _description_
         """
         with open(file_path,'w') as f:
             f.write(self.bdict.to_json())
 
     def to_mermaid(self):
-        """_summary_
+        """输出为mermaid文件
 
         Returns:
-            _type_: _description_
+            str: 对应输出的mermaid文件
         """
         edges = self.edges
         nodes = self.nodes
@@ -245,6 +295,3 @@ class Canvas():
         mermaid_graph += "\n   ".join(edge_lines)
 
         return mermaid_graph
-    
-    async def work(self):
-        logger.info('async work infor')
