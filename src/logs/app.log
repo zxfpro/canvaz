@@ -183,3 +183,6 @@
 2025-07-01 14:07:43,078 - INFO - root - core:311 - select_nodes_by_text
 2025-07-01 14:09:22,800 - INFO - root - core:311 - select_nodes_by_text
 2025-07-01 14:10:42,067 - INFO - root - core:311 - select_nodes_by_text
+2025-07-02 09:12:48,174 - ERROR - ipykernel.comm - manager:46 - No such comm target registered: jupyter.widget.control
+2025-07-02 09:12:48,186 - WARNING - Comm - base_comm:246 - No such comm: 695d9d00-7750-419a-8821-6bcad7bfb7a6
+2025-07-02 09:12:48,187 - DEBUG - Comm - base_comm:249 - Current comms: []
